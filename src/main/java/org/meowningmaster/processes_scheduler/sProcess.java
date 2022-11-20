@@ -13,5 +13,9 @@ public class sProcess {
     this.cpudone = cpudone;
     this.ionext = ionext;
     this.numblocked = numblocked;
-  } 	
+  }
+
+  public String toString() {
+    return String.format("%d %d %d", cputime, ioblocking, cpudone);
+  }
 }

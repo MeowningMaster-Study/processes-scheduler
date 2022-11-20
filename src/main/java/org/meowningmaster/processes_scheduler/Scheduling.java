@@ -24,16 +24,14 @@ public class Scheduling {
 
   private static void Init(String file) {
     File f = new File(file);
-    String line;
-    String tmp;
     int cputime = 0;
     int ioblocking = 0;
     double X = 0.0;
 
-    try {   
-      //BufferedReader in = new BufferedReader(new FileReader(f));
-      DataInputStream in = new DataInputStream(new FileInputStream(f));
-      while ((line = in.readLine()) != null) {
+    try {
+      Scanner in = new Scanner(f);
+      while (in.hasNextLine()) {
+        String line = in.nextLine();
         if (line.startsWith("numprocess")) {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken();
@@ -71,27 +69,27 @@ public class Scheduling {
     } catch (IOException e) { /* Handle exceptions */ }
   }
 
-  private static void debug() {
-    int i = 0;
+  // private static void debug() {
+  //   int i = 0;
 
-    System.out.println("processnum " + processnum);
-    System.out.println("meandevm " + meanDev);
-    System.out.println("standdev " + standardDev);
-    int size = processVector.size();
-    for (i = 0; i < size; i++) {
-      sProcess process = (sProcess) processVector.elementAt(i);
-      System.out.println("process " + i + " " + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.numblocked);
-    }
-    System.out.println("runtime " + runtime);
-  }
+  //   System.out.println("processnum " + processnum);
+  //   System.out.println("meandevm " + meanDev);
+  //   System.out.println("standdev " + standardDev);
+  //   int size = processVector.size();
+  //   for (i = 0; i < size; i++) {
+  //     sProcess process = (sProcess) processVector.elementAt(i);
+  //     System.out.println("process " + i + " " + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.numblocked);
+  //   }
+  //   System.out.println("runtime " + runtime);
+  // }
 
   public static void main(String[] args) {
     int i = 0;
 
-    /* if (args.length != 1) {
-      System.out.println("Usage: 'java Scheduling <INIT FILE>'");
-      System.exit(-1);
-    } */
+    // if (args.length != 1) {
+    //   System.out.println("Usage: 'java Scheduling <INIT FILE>'");
+    //   System.exit(-1);
+    // }
 
     String filepath = "scheduling.conf";
     File f = new File(filepath);
@@ -118,10 +116,10 @@ public class Scheduling {
         i++;
       }
     }
-    result = SchedulingAlgorithm.Run(runtime, processVector, result);    
+    result = SchedulingAlgorithm.Run(runtime, processVector, result);
+    PrintStream out = null;
     try {
-      //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
-      PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
+      out = new PrintStream(new FileOutputStream(resultsFile));
       out.println("Scheduling Type: " + result.schedulingType);
       out.println("Scheduling Name: " + result.schedulingName);
       out.println("Simulation Run Time: " + result.compuTime);
@@ -129,7 +127,7 @@ public class Scheduling {
       out.println("Standard Deviation: " + standardDev);
       out.println("Process #\tCPU Time\tIO Blocking\tCPU Completed\tCPU Blocked");
       for (i = 0; i < processVector.size(); i++) {
-        sProcess process = (sProcess) processVector.elementAt(i);
+        sProcess process = processVector.elementAt(i);
         out.print(Integer.toString(i));
         if (i < 100) { out.print("\t\t"); } else { out.print("\t"); }
         out.print(Integer.toString(process.cputime));
@@ -140,8 +138,13 @@ public class Scheduling {
         if (process.cpudone < 100) { out.print(" (ms)\t\t"); } else { out.print(" (ms)\t"); }
         out.println(process.numblocked + " times");
       }
-      out.close();
-    } catch (IOException e) { /* Handle exceptions */ }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } finally {
+      if (out != null) {
+        out.close();
+      }
+    }
   System.out.println("Completed.");
   }
 }
