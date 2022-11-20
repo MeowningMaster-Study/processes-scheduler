@@ -1,3 +1,5 @@
+package org.meowningmaster.processes_scheduler;
+
 public class Results {
   public String schedulingType;
   public String schedulingName;

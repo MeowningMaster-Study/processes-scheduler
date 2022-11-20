@@ -2,12 +2,14 @@
 // the scheduling algorithm written by the user resides.
 // User modification should occur within the Run() function.
 
+package org.meowningmaster.processes_scheduler;
+
 import java.util.Vector;
 import java.io.*;
 
 public class SchedulingAlgorithm {
 
-  public static Results Run(int runtime, Vector processVector, Results result) {
+  public static Results Run(int runtime, Vector<sProcess> processVector, Results result) {
     int i = 0;
     int comptime = 0;
     int currentProcess = 0;

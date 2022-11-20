@@ -1,3 +1,5 @@
+package org.meowningmaster.processes_scheduler;
+
 public class Common {
 
   static public int s2i (String s) {
