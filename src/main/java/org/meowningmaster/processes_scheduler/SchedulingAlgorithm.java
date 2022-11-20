@@ -13,7 +13,7 @@ public class SchedulingAlgorithm {
   LinkedList<sProcess> processes;
   sProcess process = null;
   LinkedList<sProcess> tickets = new LinkedList<>();
-  int quantumSize = 20; // ms
+  int timeQuantumSize = 50; // ms
 
   public SchedulingAlgorithm(LinkedList<sProcess> processes) {
     String resultsFile = "Summary-Processes";
@@ -45,7 +45,7 @@ public class SchedulingAlgorithm {
    */
   public void elect() {
     int i = new Random().nextInt(tickets.size());
-    process = processes.get(i);
+    process = tickets.get(i);
     print("registered");
   }
 
@@ -55,11 +55,11 @@ public class SchedulingAlgorithm {
 
     int completed = 0;
     int comptime = 0;
-    for (; comptime <= runtime; comptime += quantumSize) {
+    for (; comptime <= runtime; comptime += timeQuantumSize) {
       elect();
 
-      process.cpudone += quantumSize;
-      process.ionext += quantumSize;
+      process.cpudone += timeQuantumSize;
+      process.ionext += timeQuantumSize;
 
       if (process.isCompleted()) {
         completed++;
@@ -68,7 +68,8 @@ public class SchedulingAlgorithm {
           result.compuTime = comptime;
           return result;
         }
-        tickets.remove(process);
+        // remove all process's tickets
+        while(tickets.remove(process)) {}
       }
 
       if (process.isIOBlocked()) {

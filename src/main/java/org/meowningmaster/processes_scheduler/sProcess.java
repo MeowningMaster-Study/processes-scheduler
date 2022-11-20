@@ -25,7 +25,7 @@ public class sProcess {
   /**
    * Priority weight
    */
-  public int weight = 1;
+  public int weight = 2;
 
   public sProcess (int index, int cputime, int ioblocking, int cpudone, int ionext, int numblocked) {
     this.index = index;
