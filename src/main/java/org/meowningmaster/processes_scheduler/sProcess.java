@@ -37,14 +37,22 @@ public class sProcess {
   }
 
   public String toString() {
-    return String.format("done: %d/%d, blocking interval: %d, times blocked: %d", cpudone, cputime, ioblocking, numblocked);
+    return String.format("done: %d/%d, I/O blocks: %d, I/O interval: %d", cpudone, cputime, numblocked, ioblocking);
   }
 
-  public boolean isCompleted() {
-    return cpudone >= cputime;
+  public int timeToComplete() {
+    return cputime - cpudone;
   }
 
-  public boolean isIOBlocked() {
-    return ionext >= ioblocking;
+  public int timeToIOBreak() {
+    return ioblocking - ionext;
+  }
+
+  /**
+   * add spent time
+   */
+  public void proceed(int time) {
+    cpudone += time;
+    ionext += time;
   }
 }

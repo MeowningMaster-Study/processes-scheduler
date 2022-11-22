@@ -4,18 +4,22 @@
 
 package org.meowningmaster.processes_scheduler;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
 
 public class SchedulingAlgorithm {
   PrintStream out;
-  LinkedList<sProcess> processes;
+  ArrayList<sProcess> processes;
   sProcess process = null;
-  LinkedList<sProcess> tickets = new LinkedList<>();
-  int timeQuantumSize = 50; // ms
+  ArrayList<sProcess> tickets = new ArrayList<>();
+  int maxTimeQuantumSize = 50; // ms
+  /**
+   * break quantum if process is blocked or completed
+   */
+  boolean breakQuantums = true;
 
-  public SchedulingAlgorithm(LinkedList<sProcess> processes) {
+  public SchedulingAlgorithm(ArrayList<sProcess> processes) {
     String resultsFile = "Summary-Processes";
     try {
       out = new PrintStream(new FileOutputStream(resultsFile));
@@ -55,13 +59,21 @@ public class SchedulingAlgorithm {
 
     int completed = 0;
     int comptime = 0;
-    for (; comptime <= runtime; comptime += timeQuantumSize) {
+    int timeQuantum;
+    for (; comptime <= runtime; comptime += timeQuantum) {
       elect();
 
-      process.cpudone += timeQuantumSize;
-      process.ionext += timeQuantumSize;
+      int timeToComplete = process.timeToComplete();
+      int timeToIOBreak = process.timeToIOBreak();
 
-      if (process.isCompleted()) {
+      if (breakQuantums) {
+        timeQuantum = Math.min(maxTimeQuantumSize, Math.min(timeToComplete, timeToIOBreak));
+      } else {
+        timeQuantum = maxTimeQuantumSize;
+      }
+      process.proceed(timeQuantum);
+
+      if (timeToComplete <= timeQuantum) {
         completed++;
         print("completed");
         if (completed == processes.size()) {
@@ -72,7 +84,7 @@ public class SchedulingAlgorithm {
         while(tickets.remove(process)) {}
       }
 
-      if (process.isIOBlocked()) {
+      if (timeToIOBreak <= timeQuantum) {
         print("I/O blocked");
         process.numblocked += 1;
         process.ionext = 0;

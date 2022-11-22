@@ -17,7 +17,7 @@ public class Scheduling {
   private static int meanDev = 1000;
   private static int standardDev = 100;
   private static int runtime = 1000;
-  private static LinkedList<sProcess> processes = new LinkedList<>();
+  private static ArrayList<sProcess> processes = new ArrayList<>();
   private static Results result = new Results("null", "null", 0);
   private static String resultsFile = "Summary-Results";
 
